@@ -1,0 +1,803 @@
+/* モダンなUIのためのベーススタイル */
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  color: #f9fafb;
+  background-color: #1e293b;
+  width: 400px;
+  height: 450px;
+}
+
+html, body, #root {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+/* ポップアップコンテナ */
+.popup-container,
+html body .popup-container,
+#root .popup-container {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  background-color: #1e293b;
+  color: #f9fafb;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.05),
+             inset 0 1px 0 0 rgba(255, 255, 255, 0.1),
+             0 2px 8px rgba(0, 0, 0, 0.4),
+             0 8px 20px rgba(0, 0, 0, 0.6);
+  border: none;
+  border-radius: 0;
+  overflow: hidden;
+  position: relative;
+  white-space: normal !important;
+  word-break: break-word !important;
+  overflow-wrap: break-word !important;
+  max-width: 100% !important;
+  overflow-x: hidden !important;
+}
+
+/* ヘッダー */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  border-bottom: 1px solid rgba(99, 102, 241, 0.2);
+  background-color: rgba(15, 23, 42, 0.8);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.header-title h1 {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #e5e7eb;
+  margin: 0;
+  display: block;
+  visibility: visible;
+  opacity: 1;
+}
+
+.dark .header-title h1 {
+  color: #e5e7eb;
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+}
+
+/* メインコンテンツ */
+.main-content {
+  flex-grow: 1;
+  padding: 20px;
+  overflow-y: auto;
+  background-color: #1e293b;
+  background-image: linear-gradient(to bottom, rgba(30, 41, 59, 0.9), rgba(15, 23, 42, 1));
+  white-space: normal !important;
+  word-break: break-word !important;
+  overflow-wrap: break-word !important;
+  max-width: 100% !important;
+  overflow-x: hidden !important;
+}
+
+/* 入力と出力の共通スタイル */
+.input-group,
+.output-group {
+  margin-bottom: 24px !important;
+  position: relative !important;
+}
+
+.input-label {
+  display: block !important;
+  font-size: 0.75rem !important;
+  font-weight: 500 !important;
+  color: #6b7280 !important;
+  margin-bottom: 6px !important;
+}
+
+/* VSCode風のフォント設定 */
+:root {
+  --vscode-font: 'Consolas', 'Menlo', 'Monaco', 'Courier New', monospace;
+}
+
+/* 入力テキストエリア */
+.textarea {
+  width: 100%;
+  min-height: 120px;
+  padding: 12px;
+  border: 1px solid rgba(99, 102, 241, 0.3);
+  border-radius: 4px;
+  background-color: rgba(15, 23, 42, 0.8);
+  color: #f9fafb;
+  font-size: 0.875rem;
+  font-family: var(--vscode-font) !important;
+  resize: none;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.1),
+              inset 0 1px 5px rgba(0, 0, 0, 0.2);
+  transition: all 0.2s ease;
+  line-height: 1.5;
+  white-space: pre-wrap !important;
+  word-break: break-word !important;
+  overflow-wrap: break-word !important;
+  width: 100%;
+  overflow-x: hidden !important;
+}
+
+.textarea:focus {
+  outline: none;
+  border-color: rgba(99, 102, 241, 0.7);
+  box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2),
+              inset 0 1px 5px rgba(0, 0, 0, 0.2);
+}
+
+/* ボタン */
+.button-container {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 24px;
+}
+
+.action-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 24px;
+  background-color: #6366f1;
+  background-image: linear-gradient(to bottom, #818cf8, #4f46e5);
+  color: white;
+  font-size: 0.875rem;
+  font-weight: 500;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3),
+              inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  transition: all 0.2s ease;
+}
+
+.action-button:hover {
+  background-image: linear-gradient(to bottom, #a5b4fc, #6366f1);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4),
+              inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+
+.action-button:active {
+  transform: translateY(1px);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3),
+              inset 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.action-button:disabled {
+  background-color: #d1d5db;
+  color: #6b7280;
+  cursor: not-allowed;
+}
+
+/* 設定ボタン */
+.settings-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 6px;
+  border: none;
+  background-color: transparent;
+  color: #e5e7eb;
+  cursor: pointer;
+  transition: background-color 0.15s, color 0.15s;
+}
+
+.settings-button:hover {
+  background-color: rgba(243, 244, 246, 0.1);
+  color: #60a5fa;
+}
+
+.settings-button:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.3);
+}
+
+/* 重要度を上げた出力スタイル */
+.output-container {
+  border-radius: 4px !important;
+  background-color: rgba(15, 23, 42, 0.8) !important;
+  overflow: hidden !important;
+  transition: all 0.3s ease !important;
+  border: 1px solid rgba(99, 102, 241, 0.3) !important;
+  margin-top: 0.75rem !important;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.1),
+              inset 0 1px 5px rgba(0, 0, 0, 0.2) !important;
+}
+
+/* 出力エリア */
+.output-content {
+  white-space: pre-wrap !important;
+  word-break: break-word !important;
+  overflow-wrap: break-word !important;
+  max-width: 100% !important;
+  overflow-x: auto !important;
+  padding: 0.75rem !important;
+  color: #f9fafb !important;
+  font-family: var(--vscode-font) !important;
+  font-size: 1rem !important;
+  line-height: 1.6 !important;
+}
+
+.output-content > div {
+  font-size: 1rem !important;
+  line-height: 1.6 !important;
+}
+
+.output-content pre {
+  white-space: pre-wrap !important;
+  word-break: break-all !important;
+  overflow-wrap: break-word !important;
+  max-width: 100% !important;
+  overflow-x: auto !important;
+  margin: 0 !important;
+}
+
+.dark .output-container {
+  background-color: rgba(15, 23, 42, 0.8);
+  border-color: rgba(99, 102, 241, 0.3);
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.1),
+              inset 0 1px 5px rgba(0, 0, 0, 0.2);
+}
+
+.output-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem 0.75rem;
+  border-bottom: 1px solid rgba(99, 102, 241, 0.2);
+  background-color: rgba(15, 23, 42, 0.9);
+}
+
+.dark .output-header {
+  border-bottom: 1px solid rgba(99, 102, 241, 0.2);
+  background-color: rgba(15, 23, 42, 0.9);
+}
+
+.output-title {
+  font-weight: 500;
+  font-size: 0.75rem;
+  color: #6b7280;
+}
+
+.dark .output-title {
+  color: #6b7280;
+}
+
+.output-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.action-icon-button {
+  display: flex;
+  align-items: center;
+  padding: 0.375rem 0.5rem;
+  background-color: transparent;
+  border-radius: 6px;
+  cursor: pointer;
+  color: #64748b;
+  border: none;
+  transition: all 0.2s ease;
+  font-size: 0.75rem;
+  gap: 0.25rem;
+}
+
+.action-icon-button:hover {
+  background-color: rgba(100, 116, 139, 0.08);
+  color: #475569;
+}
+
+.dark .action-icon-button {
+  color: #94a3b8;
+}
+
+.dark .action-icon-button:hover {
+  background-color: rgba(148, 163, 184, 0.08);
+  color: #cbd5e1;
+}
+
+.separator {
+  height: 16px;
+  width: 1px;
+  background-color: #e2e8f0;
+  margin: 0 0.25rem;
+}
+
+.dark .separator {
+  background-color: #334155;
+}
+
+.code-block {
+  position: relative;
+  padding: 0.75rem;
+  font-family: var(--vscode-font) !important;
+  font-size: 0.875rem;
+  overflow-y: auto;
+  overflow-x: hidden;
+  line-height: 1.5;
+  max-height: 500px;
+  width: 100%;
+  color: #f9fafb;
+  white-space: pre-wrap !important;
+  word-break: break-word !important;
+  overflow-wrap: break-word !important;
+  max-width: 100% !important;
+  overflow-x: auto !important;
+}
+
+/* Empty state */
+.output-placeholder {
+  display: none !important;
+}
+
+.output-tip {
+  display: none !important;
+}
+
+/* Syntax Highlighting */
+.token.comment,
+.token.prolog,
+.token.doctype,
+.token.cdata {
+  color: #6b7280;
+}
+
+.token.punctuation {
+  color: #64748b;
+}
+
+.token.property,
+.token.tag,
+.token.boolean,
+.token.number,
+.token.constant,
+.token.symbol {
+  color: #ef4444;
+}
+
+.token.selector,
+.token.attr-name,
+.token.string,
+.token.char,
+.token.builtin {
+  color: #10b981;
+}
+
+.token.operator,
+.token.entity,
+.token.url,
+.language-css .token.string,
+.style .token.string {
+  color: #8b5cf6;
+}
+
+.token.atrule,
+.token.attr-value,
+.token.keyword {
+  color: #3b82f6;
+}
+
+.token.function,
+.token.class-name {
+  color: #f59e0b;
+}
+
+.token.regex,
+.token.important,
+.token.variable {
+  color: #ec4899;
+}
+
+.dark .token.comment,
+.dark .token.prolog,
+.dark .token.doctype,
+.dark .token.cdata {
+  color: #9ca3af;
+}
+
+.dark .token.punctuation {
+  color: #94a3b8;
+}
+
+.dark .token.property,
+.dark .token.tag,
+.dark .token.boolean,
+.dark .token.number,
+.dark .token.constant,
+.dark .token.symbol {
+  color: #f87171;
+}
+
+.dark .token.selector,
+.dark .token.attr-name,
+.token.string,
+.dark .token.char,
+.dark .token.builtin {
+  color: #34d399;
+}
+
+.dark .token.operator,
+.dark .token.entity,
+.dark .token.url,
+.dark .language-css .token.string,
+.dark .style .token.string {
+  color: #a78bfa;
+}
+
+.dark .token.atrule,
+.dark .token.attr-value,
+.dark .token.keyword {
+  color: #60a5fa;
+}
+
+.dark .token.function,
+.dark .token.class-name {
+  color: #fbbf24;
+}
+
+.dark .token.regex,
+.dark .token.important,
+.dark .token.variable {
+  color: #f472b6;
+}
+
+/* フッター */
+.footer {
+  padding: 12px 24px;
+  border-top: 1px solid rgba(99, 102, 241, 0.2);
+  background-color: rgba(15, 23, 42, 0.8);
+  text-align: center;
+}
+
+.footer p {
+  margin: 0;
+  font-size: 0.75rem;
+  color: #9ca3af;
+}
+
+/* フッターのスタイル追加 */
+.footer-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.footer-settings {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+}
+
+/* スクロールバーカスタマイズ */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #a0aec0;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #718096;
+}
+
+/* スピンアニメーション */
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* 出力ボックスのローディング状態 */
+.output-loading {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 2rem 1rem !important;
+  color: #6b7280 !important;
+}
+
+.dark .output-loading {
+  color: #9ca3af;
+}
+
+.spinner {
+  width: 2.5rem !important;
+  height: 2.5rem !important;
+  border: 3px solid rgba(203, 213, 225, 0.1) !important;
+  border-radius: 50% !important;
+  border-top-color: #8b5cf6 !important;
+  animation: spin 1s ease-in-out infinite !important;
+  margin-bottom: 1rem !important;
+}
+
+.dark .spinner {
+  border-color: rgba(75, 85, 99, 0.2);
+  border-top-color: #818cf8;
+}
+
+/* エラー表示の更新 */
+.output-error {
+  display: flex !important;
+  align-items: flex-start !important;
+  padding: 1rem !important;
+  background-color: rgba(239, 68, 68, 0.08) !important;
+  border-radius: 6px !important;
+  color: #ef4444 !important;
+  gap: 0.75rem !important;
+}
+
+.dark .output-error {
+  color: #f87171;
+}
+
+.output-error svg {
+  width: 1.5rem !important;
+  height: 1.5rem !important;
+  flex-shrink: 0 !important;
+}
+
+/* コピーボタン */
+.copy-button-minimal {
+  position: absolute !important;
+  top: 0.5rem !important;
+  right: 0.5rem !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 28px !important;
+  height: 28px !important;
+  background-color: rgba(30, 41, 59, 0.8) !important;
+  border: 1px solid rgba(99, 102, 241, 0.3) !important;
+  border-radius: 4px !important;
+  cursor: pointer !important;
+  color: #94a3b8 !important;
+  z-index: 10 !important;
+}
+
+.copy-button-minimal:hover {
+  background-color: rgba(30, 41, 59, 0.9) !important;
+  color: #f1f5f9 !important;
+}
+
+/* ポップアップ内のコンテンツの自動改行設定 */
+.popup-content {
+  white-space: normal !important;
+  word-break: break-word !important;
+  overflow-wrap: break-word !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  overflow-x: hidden !important;
+}
+
+/* テーブル内のコンテンツの自動改行設定 */
+table td {
+  white-space: normal !important;
+  word-break: break-word !important;
+  overflow-wrap: break-word !important;
+  max-width: 100% !important;
+}
+
+/* テキストエリアと入力フィールドのスタイル */
+.textarea,
+.input-field {
+  white-space: pre-wrap !important;
+  word-break: break-word !important;
+  overflow-wrap: break-word !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  overflow-x: hidden !important;
+}
+
+/* コードブロックのスタイル */
+.code-block,
+pre,
+code {
+  white-space: pre-wrap !important;
+  word-break: break-word !important;
+  overflow-wrap: break-word !important;
+  max-width: 100% !important;
+  overflow-x: hidden !important;
+}
+
+/* ポップアップコンテンツのスタイル */
+.popup-content,
+.popup-container,
+.main-content {
+  white-space: normal !important;
+  word-break: break-word !important;
+  overflow-wrap: break-word !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  overflow-x: hidden !important;
+}
+
+/* テーブルセルのスタイル */
+table td,
+table th {
+  white-space: normal !important;
+  word-break: break-word !important;
+  overflow-wrap: break-word !important;
+  max-width: 100% !important;
+}
+
+/* 一般的なテキストコンテナのスタイル */
+.text-container,
+.content-area {
+  white-space: normal !important;
+  word-break: break-word !important;
+  overflow-wrap: break-word !important;
+  max-width: 100% !important;
+  overflow-x: hidden !important;
+}
+
+/* 長い単語や文字列を持つ要素の一般的な対応 */
+* {
+  max-width: 100%;
+}
+
+/* テーブルセルの内容が折り返されるようにする */
+td, th {
+  white-space: normal !important;
+  word-break: break-word !important;
+  overflow-wrap: break-word !important;
+  max-width: 100% !important;
+}
+
+/* JSON表示用のスタイル調整 */
+pre.json-display {
+  white-space: pre-wrap !important;
+  word-break: break-word !important;
+  overflow-wrap: break-word !important;
+  max-width: 100% !important;
+  overflow-x: auto !important;
+}
+
+/* テキスト表示の共通スタイル - 自動折り返し */
+.output-content, 
+.text-container, 
+.code-block, 
+pre, 
+code, 
+.popup-content, 
+.content-area,
+.description-text,
+.history-item-content {
+  white-space: pre-wrap !important;
+  word-break: break-word !important;
+  overflow-wrap: break-word !important;
+  max-width: 100% !important;
+  overflow-x: hidden !important;
+}
+
+/* コードブロックとテーブルのみ横スクロール許可 */
+.code-block.scrollable,
+pre.scrollable,
+table {
+  overflow-x: auto !important;
+  white-space: pre !important;
+}
+
+/* テーブルセルの最適化 */
+td, th {
+  word-break: break-word !important;
+  max-width: 300px !important;
+}
+
+/* JSON表示の最適化 */
+.json-content {
+  white-space: pre-wrap !important;
+  word-break: break-word !important;
+}
+
+/* テキストの自動折り返しとオーバーフロー対策のCSS */
+.output-content, 
+.text-container, 
+.content-area,
+.popup-content,
+.markdown-body,
+.json-content {
+  white-space: pre-wrap !important;
+  word-break: break-word !important;
+  overflow-wrap: break-word !important;
+  max-width: 100% !important;
+  overflow-x: hidden !important;
+}
+
+/* スクロール可能なコードブロックのみ横スクロールを許可 */
+.code-block.scrollable,
+pre.scrollable {
+  white-space: pre !important;
+  overflow-x: auto !important;
+}
+
+/* テーブルのスタイル調整 */
+table {
+  table-layout: fixed;
+  width: 100%;
+  overflow-x: auto;
+  display: block; /* モバイル表示での横スクロール用 */
+  max-width: 100%;
+}
+
+td, th {
+  max-width: 300px;
+  white-space: normal !important;
+  word-break: break-word !important;
+  overflow-wrap: break-word !important;
+}
+
+/* JSONコンテンツの表示の最適化 */
+.json-content {
+  font-family: monospace;
+  white-space: pre-wrap !important;
+  word-break: break-word !important;
+  overflow-wrap: break-word !important;
+  max-width: 100% !important;
+  overflow-x: hidden !important;
+}
+
+/* コードとプリタグの特殊処理 */
+code, pre {
+  white-space: pre-wrap !important;
+  word-break: break-word !important;
+  overflow-wrap: break-word !important;
+  max-width: 100% !important;
+  overflow-x: hidden !important;
+}
+
+/* 長いURL、コマンド、パスなどの対策 */
+.break-all {
+  word-break: break-all !important;
+}
+
+/* npmコマンドやログ出力などの特殊テキスト対応 */
+.command-output, 
+.log-output,
+.npm-output {
+  white-space: pre-wrap !important;
+  word-break: break-all !important;
+  overflow-wrap: break-word !important;
+  max-width: 100% !important;
+  overflow-x: hidden !important;
+  font-family: monospace;
+}
+
+/* グローバルな横オーバーフロー防止 */
+.output-container,
+.markdown-output,
+.code-output,
+.response-container {
+  overflow-x: hidden !important;
+  max-width: 100% !important;
+}
+
+/* 特に長い単語がある場合の対策 */
+* {
+  max-width: 100%;
+  overflow-wrap: break-word;
+} 

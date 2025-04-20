@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ClearCodes Popup</title>
+    <style>
+      /* モダンなUIのためのベーススタイル */
+      body {
+        margin: 0;
+        padding: 0;
+        font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        color: #f9fafb;
+        background-color: #1e293b; /* 背景色を暗い色に統一 */
+        width: 400px;
+        height: 450px;
+        overflow: hidden;
+      }
+
+      #root {
+        width: 100%;
+        height: 100%;
+      }
+
+      /* ポップアップコンテナ */
+      .popup-container {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        background-color: #1e293b; /* ダークなテーマ色 */
+        color: #f9fafb;
+        box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.05),
+                   inset 0 1px 0 0 rgba(255, 255, 255, 0.1),
+                   0 2px 8px rgba(0, 0, 0, 0.4),
+                   0 8px 20px rgba(0, 0, 0, 0.6);
+        border: none;
+        border-radius: 0;
+        overflow: hidden;
+      }
+
+      /* ヘッダー */
+      .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 16px 20px;
+        border-bottom: 1px solid #374151; /* より暗いボーダー */
+        background-color: #1f2937; /* 暗めの背景 */
+        position: sticky;
+        top: 0;
+        z-index: 10;
+      }
+
+      .header h1 {
+        display: none;
+      }
+
+      /* メインコンテンツ */
+      .main-content {
+        flex-grow: 1;
+        padding: 20px;
+        overflow-y: auto;
+        background-color: #1e293b; /* 同じ背景色で統一 */
+        background-image: linear-gradient(to bottom, rgba(30, 41, 59, 0.9), rgba(15, 23, 42, 1));
+      }
+
+      /* 入力ボックス */
+      .input-group {
+        margin-bottom: 24px;
+      }
+
+      .input-label {
+        display: block;
+        font-size: 0.75rem;
+        font-weight: 600; /* 太字に */
+        color: #A78BFA; /* 明るい紫色のラベル */
+        margin-bottom: 6px;
+        letter-spacing: 0.025em;
+      }
+
+      .textarea {
+        width: 100%;
+        min-height: 120px;
+        padding: 12px;
+        border: 1px solid rgba(99, 102, 241, 0.3);
+        border-radius: 4px;
+        background-color: rgba(15, 23, 42, 0.8);
+        color: #F9FAFB;
+        font-size: 0.875rem;
+        font-weight: 500;
+        resize: none;
+        box-sizing: border-box;
+        box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.1),
+                    inset 0 1px 5px rgba(0, 0, 0, 0.2);
+        transition: all 0.2s ease;
+      }
+
+      .textarea:focus {
+        outline: none;
+        border-color: #8B5CF6; /* 紫色のフォーカスボーダー */
+        box-shadow: 0 0 0 2px rgba(139, 92, 246, 0.2), 0 0 10px rgba(139, 92, 246, 0.1);
+      }
+
+      /* ボタン */
+      .button-container {
+        display: flex;
+        justify-content: flex-end;
+        margin-bottom: 24px;
+      }
+
+      .action-button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 10px 24px;
+        background-color: #8B5CF6; /* 紫色のボタン */
+        background-image: linear-gradient(to right, #8B5CF6, #7C3AED); /* 紫のグラデーション */
+        color: white;
+        font-size: 0.875rem;
+        font-weight: 600; /* 太字に */
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        box-shadow: 0 0 10px rgba(139, 92, 246, 0.3); /* 光彩効果 */
+      }
+
+      .action-button:hover {
+        background-image: linear-gradient(to right, #9F7AFA, #8B5CF6);
+        box-shadow: 0 0 15px rgba(139, 92, 246, 0.5); /* ホバー時に光彩強化 */
+        transform: translateY(-1px);
+      }
+
+      .action-button:focus {
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.4), 0 0 15px rgba(139, 92, 246, 0.4);
+      }
+
+      .action-button:disabled {
+        background-image: none;
+        background-color: #4B5563; /* グレー */
+        color: #9CA3AF;
+        cursor: not-allowed;
+        box-shadow: none;
+        transform: none;
+      }
+
+      /* 設定ボタン */
+      .settings-button {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 36px;
+        height: 36px;
+        border-radius: 8px;
+        border: none;
+        background-color: transparent;
+        color: #6b7280;
+        cursor: pointer;
+        transition: background-color 0.15s, color 0.15s;
+      }
+
+      .settings-button:hover {
+        background-color: #f3f4f6;
+        color: #2563eb;
+      }
+
+      .settings-button:focus {
+        outline: none;
+        box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.3);
+      }
+
+      /* 出力ボックス */
+      .output-group {
+        margin-bottom: 24px;
+      }
+
+      .output-box {
+        padding: 16px;
+        min-height: 150px;
+        border: 1px solid rgba(99, 102, 241, 0.3);
+        border-radius: 4px;
+        background-color: rgba(15, 23, 42, 0.8);
+        color: #F9FAFB;
+        box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.1),
+                    inset 0 1px 5px rgba(0, 0, 0, 0.2);
+        transition: all 0.3s ease;
+      }
+
+      .output-box.empty {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background-color: #1F2937; /* 少し明るい暗め背景 */
+        color: #9CA3AF;
+        font-style: italic;
+      }
+
+      .output-box.loading {
+        animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        border-color: #8B5CF6; /* 紫色のボーダー */
+        box-shadow: 0 0 10px rgba(139, 92, 246, 0.2); /* 光彩効果 */
+      }
+
+      @keyframes pulse {
+        0%, 100% {
+          opacity: 1;
+        }
+        50% {
+          opacity: 0.7;
+        }
+      }
+
+      /* フッター */
+      .footer {
+        padding: 12px 24px;
+        border-top: 1px solid #374151; /* より暗いボーダー */
+        background-color: #1f2937; /* 暗めの背景 */
+        text-align: center;
+      }
+
+      .footer-content {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        width: 100%;
+      }
+
+      .footer-settings {
+        margin-left: auto;
+      }
+
+      .footer p {
+        margin: 0;
+        font-size: 0.75rem;
+        color: #9ca3af; /* グレーのテキスト */
+      }
+
+      /* スクロールバーカスタマイズ */
+      ::-webkit-scrollbar {
+        width: 6px;
+      }
+
+      ::-webkit-scrollbar-track {
+        background: #f1f1f1;
+      }
+
+      ::-webkit-scrollbar-thumb {
+        background: #a0aec0;
+        border-radius: 3px;
+      }
+
+      ::-webkit-scrollbar-thumb:hover {
+        background: #718096;
+      }
+
+      /* スピンアニメーション */
+      @keyframes spin {
+        from {
+          transform: rotate(0deg);
+        }
+        to {
+          transform: rotate(360deg);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div id="root"></div>
+    <!-- ビルド後のJSファイル名を指定 -->
+    <script type="module" src="./assets/popup.js"></script>
+  </body>
+</html> 

@@ -1,0 +1,16 @@
+# ビルドファイル
+dist/
+build/
+
+# 依存関係
+node_modules/
+npm-debug.log
+
+# 環境変数
+.env
+
+# その他
+tmp/
+.DS_Store
+*.bak
+*.new

@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ClearCodes 設定</title>
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+        font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        color: #f9fafb;
+        background-color: #1e293b; /* 背景色を暗い色に統一 */
+        overflow: hidden;
+      }
+      
+      /* 大きなアイコンを非表示 */
+      svg {
+        max-width: 24px;
+        max-height: 24px;
+      }
+      
+      /* 角張ったコンテナに立体感を追加 */
+      .min-h-screen {
+        background-color: #1e293b !important;
+        color: #f9fafb !important;
+      }
+      
+      .min-h-screen .max-w-md {
+        border-radius: 0px !important;
+        box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.05),
+                   inset 0 1px 0 0 rgba(255, 255, 255, 0.1),
+                   0 2px 8px rgba(0, 0, 0, 0.4),
+                   0 8px 20px rgba(0, 0, 0, 0.6) !important;
+        background-color: #1e293b !important;
+        background-image: linear-gradient(to bottom, rgba(30, 41, 59, 0.9), rgba(15, 23, 42, 1)) !important;
+        border: none !important;
+      }
+      
+      /* 入力フィールドの立体感 */
+      input[type="password"], input[type="text"] {
+        background-color: rgba(15, 23, 42, 0.8) !important;
+        border: 1px solid rgba(99, 102, 241, 0.3) !important;
+        box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.1),
+                    inset 0 1px 5px rgba(0, 0, 0, 0.2) !important;
+        color: #f9fafb !important;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="options-root"></div>
+    <!-- ビルド後のJSファイル名を指定 -->
+    <script type="module" src="./assets/options.js"></script>
+  </body>
+</html> 
