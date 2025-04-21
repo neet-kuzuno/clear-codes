@@ -1,0 +1,13 @@
+[1mdiff --git a/src/components/SettingsButton.jsx b/src/components/SettingsButton.jsx[m
+[1mindex 4964241..d70d019 100644[m
+[1m--- a/src/components/SettingsButton.jsx[m
+[1m+++ b/src/components/SettingsButton.jsx[m
+[36m@@ -16,7 +16,7 @@[m [mfunction SettingsButton({ onClick }) {[m
+         outline: 'none',[m
+         border: 'none',[m
+         transition: 'transform 0.3s ease-in-out',[m
+[31m-        transform: isHovered ? 'rotate(90deg)' : 'rotate(0deg)',[m
+[32m+[m[32m        transform: isHovered ? 'rotate(45deg)' : 'rotate(0deg)',[m
+       }}[m
+       aria-label="設定を開く"[m
+     >[m

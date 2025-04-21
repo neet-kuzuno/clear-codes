@@ -16,7 +16,7 @@ function SettingsButton({ onClick }) {
         outline: 'none',
         border: 'none',
         transition: 'transform 0.3s ease-in-out',
-        transform: isHovered ? 'rotate(90deg)' : 'rotate(0deg)',
+        transform: isHovered ? 'rotate(45deg)' : 'rotate(0deg)',
       }}
       aria-label="設定を開く"
     >
