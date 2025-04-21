@@ -153,12 +153,12 @@ const OutputBox = ({ outputDisplay, result, error, onRegenerate }) => {
             title="コピー"
           >
             {copied ? (
-              <CheckCircleIcon style={{width: '18px', height: '18px', color: 'white'}} />
+              <CheckCircleIcon style={{width: '40px', height: '40px', color: 'white'}} />
             ) : (
               <img 
                 src={copyIconUrl} 
                 alt="コピー" 
-                style={{width: '18px', height: '18px', filter: 'brightness(0) invert(1)'}} 
+                style={{width: '30px', height: '30px', filter: 'brightness(0) invert(1)'}} 
               />
             )}
           </button>

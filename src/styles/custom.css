@@ -234,38 +234,18 @@ html body .button-container,
 
 /* 設定ボタン */
 .settings-button {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 22px;
-  height: 22px;
-  border-radius: 6px;
-  border: none;
-  background-color: transparent;
-  color: #e5e7eb;
-  cursor: pointer;
-  transition: background-color 0.15s, color 0.15s;
-}
-
-.settings-button:hover,
-.settings-button:focus,
-.settings-button:active,
-html body .settings-button:hover,
-#root .settings-button:hover,
-[class*="settings-button"]:hover {
-  background-color: transparent !important;
+  background: transparent !important;
   box-shadow: none !important;
   outline: none !important;
   border: none !important;
-  color: #60a5fa;
+  padding: 8px !important;
+  cursor: pointer !important;
+  border-radius: 0.375rem !important;
+  transition: background-color 0.2s ease-in-out !important;
 }
 
-.settings-button:focus,
-html body .settings-button:focus,
-#root .settings-button:focus {
-  outline: none !important;
-  box-shadow: none !important;
-  border: none !important;
+.settings-button:hover {
+  background-color: rgba(75, 85, 99, 0.3) !important;
 }
 
 /* 重要度を上げた出力スタイル */
@@ -911,4 +891,52 @@ body [class*="output-buttons-container"] {
   align-items: center !important;
   margin-bottom: 6px !important;
   width: 100% !important;
+}
+
+/* 設定アイコンのアニメーション */
+@keyframes rotateGear {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(30deg);
+  }
+}
+
+.settings-gear-icon {
+  transition: transform 0.7s ease-in-out;
+}
+
+.settings-gear-container:hover .settings-gear-icon {
+  animation: rotateGear 0.7s forwards;
+  transform: rotate(30deg);
+}
+
+/* 設定アイコン用の明示的なスタイル */
+#gear-icon-container {
+  position: relative;
+  cursor: pointer;
+  padding: 8px;
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 0.5rem;
+  backdrop-filter: blur(2px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#gear-icon-container:hover {
+  background-color: rgba(255, 255, 255, 0.15);
+}
+
+#gear-icon {
+  width: 24px;
+  height: 24px;
+  color: white !important;
+  transition: transform 0.5s ease;
+}
+
+#gear-icon-container:hover #gear-icon {
+  animation: spin 2s linear infinite;
+  transform-origin: center;
 } 

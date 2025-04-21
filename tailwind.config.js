@@ -21,6 +21,11 @@ export default {
           light: '#1F2937', // ライト背景
           DEFAULT: '#111827', // メイン背景
           dark: '#0F172A', // ダーク背景
+        },
+        // 設定画面用の追加カラー
+        gray: {
+          750: '#1e2533', // gray-700とgray-800の間
+          850: '#141c2b', // gray-800とgray-900の間
         }
       },
       fontFamily: {
@@ -35,9 +40,12 @@ export default {
       boxShadow: {
         'glow-purple': '0 0 15px rgba(139, 92, 246, 0.5)',
         'glow-cyan': '0 0 15px rgba(34, 211, 238, 0.5)',
+        'inner-dark': 'inset 0 2px 4px 0 rgba(0, 0, 0, 0.3)'
       },
       backgroundImage: {
         'gradient-purple-blue': 'linear-gradient(to right, #8B5CF6, #22D3EE)',
+        'gradient-purple-indigo': 'linear-gradient(to right, #8B5CF6, #4F46E5)',
+        'gradient-dark': 'linear-gradient(to bottom, #1F2937, #111827)',
       }
     },
   },
@@ -60,6 +68,10 @@ export default {
     'hover:text-primary',
     'focus:ring-primary',
     'focus:ring-primary/50',
+    'bg-gray-750',
+    'bg-gray-850',
+    'bg-gradient-purple-indigo',
+    'bg-gradient-dark',
   ],
   plugins: [
     require('@tailwindcss/typography'),
