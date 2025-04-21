@@ -1,27 +1,14 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import {
-  ArrowPathIcon,
-  DocumentDuplicateIcon,
-  CheckIcon,
-  ExclamationCircleIcon,
-  ExclamationTriangleIcon
-} from '@heroicons/react/24/outline';
+import { ExclamationTriangleIcon } from '@heroicons/react/24/outline';
 import { CheckCircleIcon } from '@heroicons/react/24/solid';
+import copyIconUrl from '/icons/copy-icon.png';
 
-const OutputBox = ({
-  outputText = '',
-  isLoading = false,
-  error = null,
-  onCopy = () => {},
-  onRegenerate = () => {},
-  className = ''
-}) => {
+const OutputBox = ({ outputDisplay, result, error, onRegenerate }) => {
   const [copied, setCopied] = useState(false);
   const outputRef = useRef(null);
-  const [isFocused, setIsFocused] = useState(false);
 
-  // Reset copied state after 2 seconds
+  // コピー状態をリセット
   useEffect(() => {
     let timeout;
     if (copied) {
@@ -30,124 +17,180 @@ const OutputBox = ({
     return () => clearTimeout(timeout);
   }, [copied]);
 
-  // Handle copy text
-  const copyToClipboard = async () => {
-    if (!outputText || isLoading) return;
+  // テキストをクリップボードにコピーする
+  const copyToClipboard = () => {
+    // 結果がない場合は何もしない
+    if (!result) {
+      console.log('何もコピーするものがありません');
+      return;
+    }
     
     try {
-      // Try to use the Clipboard API
-      await navigator.clipboard.writeText(outputText);
-      setCopied(true);
-      if (onCopy) onCopy(outputText);
+      // クリップボードAPIを使用
+      navigator.clipboard.writeText(result)
+        .then(() => {
+          console.log('コピー成功');
+          setCopied(true);
+        })
+        .catch(err => {
+          console.error('コピーに失敗しました:', err);
+          // フォールバック方法
+          fallbackCopy();
+        });
     } catch (err) {
-      // Fallback method
-      const textArea = document.createElement('textarea');
-      textArea.value = outputText;
-      document.body.appendChild(textArea);
-      textArea.select();
-      
-      try {
-        document.execCommand('copy');
-        setCopied(true);
-        if (onCopy) onCopy(outputText);
-      } catch (e) {
-        console.error('Fallback copy failed:', e);
-      }
-      
-      document.body.removeChild(textArea);
+      console.error('コピーエラー:', err);
+      fallbackCopy();
     }
   };
 
-  return (
-    <motion.div 
-      className={`relative bg-gray-800 rounded-md overflow-hidden border border-gray-700 shadow-lg ${className}`}
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.3 }}
-    >
-      <div className="p-4">
-        <div className="flex justify-between items-center mb-2">
-          <motion.h3 
-            className="input-label"
-            initial={{ opacity: 0.8 }}
-            animate={{ opacity: 1, color: isFocused ? '#A78BFA' : '#8B5CF6' }}
-            transition={{ duration: 0.2 }}
-          >
-            Output
-          </motion.h3>
-          <div className="flex space-x-2">
-            {outputText && !isLoading && (
-              <>
-                <motion.button
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  onClick={copyToClipboard}
-                  className="p-1.5 rounded-md text-gray-400 hover:text-white hover:bg-gray-700 transition-colors"
-                  aria-label="コピー"
-                  title="コピー"
-                  disabled={isLoading || !outputText}
-                >
-                  {copied ? (
-                    <CheckCircleIcon className="h-5 w-5 text-green-500" />
-                  ) : (
-                    <DocumentDuplicateIcon className="h-5 w-5" />
-                  )}
-                </motion.button>
-                {onRegenerate && (
-                  <motion.button
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    onClick={onRegenerate}
-                    className="p-1.5 rounded-md text-gray-400 hover:text-white hover:bg-gray-700 transition-colors"
-                    aria-label="再生成"
-                    title="再生成"
-                    disabled={isLoading}
-                  >
-                    <ArrowPathIcon className="h-5 w-5" />
-                  </motion.button>
-                )}
-              </>
-            )}
-          </div>
-        </div>
+  const fallbackCopy = () => {
+    try {
+      const textArea = document.createElement('textarea');
+      textArea.value = result;
+      textArea.style.position = 'fixed';  // 画面外に配置
+      textArea.style.left = '-9999px';
+      textArea.style.top = '-9999px';
+      document.body.appendChild(textArea);
+      textArea.focus();
+      textArea.select();
+      
+      const successful = document.execCommand('copy');
+      document.body.removeChild(textArea);
+      
+      if (successful) {
+        console.log('フォールバックコピー成功');
+        setCopied(true);
+      } else {
+        console.error('フォールバックコピー失敗');
+      }
+    } catch (e) {
+      console.error('フォールバックコピー例外:', e);
+    }
+  };
 
+  // 出力コンテンツの整形
+  const formatOutput = (text) => {
+    // HTMLを安全に挿入するために必要
+    if (!text) return '';
+    return text.replace(/\n/g, '<br>');
+  };
+
+  // 出力コンテンツを定義
+  let content;
+  switch (outputDisplay) {
+    case 'loading':
+      content = (
+        <div className="flex items-center justify-center h-[120px]">
+          <motion.div 
+            className="w-12 h-12 rounded-full border-t-2 border-b-2 border-purple-500"
+            animate={{ rotate: 360 }}
+            transition={{ 
+              repeat: Infinity, 
+              duration: 1, 
+              ease: "linear"
+            }}
+          />
+        </div>
+      );
+      break;
+    case 'error':
+      content = (
+        <div className="flex items-center justify-center h-[120px] text-red-400">
+          <ExclamationTriangleIcon className="h-6 w-6 mr-2" />
+          <span>エラーが発生しました: {error}</span>
+        </div>
+      );
+      break;
+    case 'result':
+      content = (
         <div 
           ref={outputRef}
-          className="output-content rounded-md bg-gray-900 p-3 text-gray-100 min-h-[120px] max-h-[400px] overflow-y-auto"
-          style={{ 
+          className="output-content"
+          style={{
+            padding: '12px 16px',
+            lineHeight: '1.7',
+            fontSize: '0.9rem',
             whiteSpace: 'pre-wrap',
-            wordBreak: 'break-all',
-            overflowWrap: 'break-word',
-            width: '100%',
-            overflowX: 'hidden'
+            wordBreak: 'break-word',
+            fontFamily: 'var(--vscode-font)',
+            color: '#f9fafb'
           }}
-          onFocus={() => setIsFocused(true)}
-          onBlur={() => setIsFocused(false)}
-        >
-          {isLoading ? (
-            <div className="flex items-center justify-center h-full">
-              <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-blue-500"></div>
-            </div>
-          ) : error ? (
-            <div className="flex items-center text-red-400 h-full">
-              <ExclamationTriangleIcon className="h-5 w-5 mr-2" />
-              <span>{error}</span>
-            </div>
-          ) : outputText ? (
-            <div style={{ fontSize: "1rem", lineHeight: "1.6" }} dangerouslySetInnerHTML={{ __html: outputText }} />
-          ) : (
-            <div style={{ 
-              color: 'rgba(156, 163, 175, 0.8)',
-              fontFamily: 'inherit', 
-              fontSize: '0.875rem',
-              userSelect: 'none'
-            }} className="flex items-center justify-center h-full">
-              ここに出力が表示されます
-            </div>
+          dangerouslySetInnerHTML={{ __html: formatOutput(result) }}
+        />
+      );
+      break;
+    default:
+      content = (
+        <div className="flex items-center justify-center h-[120px] text-gray-500">
+          <span style={{ color: 'rgba(156, 163, 175, 0.8)', userSelect: 'none' }}>
+            ここに出力が表示されます
+          </span>
+        </div>
+      );
+  }
+
+  return (
+    <div className="output-group">
+      <div className="output-header" style={{display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '6px'}}>
+        <label className="input-label">Output</label>
+        <div className="output-buttons" style={{display: 'flex', gap: '6px'}}>
+          {/* シンプルなHTMLボタン - コピー */}
+          <button 
+            onClick={copyToClipboard}
+            className="action-btn"
+            style={{
+              width: '24px',
+              height: '24px',
+              backgroundColor: copied ? '#10B981' : 'rgba(55, 65, 81, 0.5)',
+              border: 'none',
+              borderRadius: '4px',
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              transition: 'all 0.2s'
+            }}
+            title="コピー"
+          >
+            {copied ? (
+              <CheckCircleIcon style={{width: '18px', height: '18px', color: 'white'}} />
+            ) : (
+              <img 
+                src={copyIconUrl} 
+                alt="コピー" 
+                style={{width: '18px', height: '18px', filter: 'brightness(0) invert(1)'}} 
+              />
+            )}
+          </button>
+          
+          {/* シンプルなHTMLボタン - 再生成 */}
+          {onRegenerate && (
+            <button 
+              onClick={onRegenerate}
+              className="action-btn"
+              style={{
+                width: '24px',
+                height: '24px',
+                backgroundColor: 'rgba(55, 65, 81, 0.5)',
+                border: 'none',
+                borderRadius: '4px',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                transition: 'all 0.2s'
+              }}
+              title="さらにわかりやすく"
+            >
+              <span style={{fontSize: '16px', lineHeight: 1}}>✨</span>
+            </button>
           )}
         </div>
       </div>
-    </motion.div>
+      <div className="output-container bg-gray-800 rounded-md border border-gray-700 overflow-hidden">
+        {content}
+      </div>
+    </div>
   );
 };
 

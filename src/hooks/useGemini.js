@@ -49,68 +49,102 @@ const useGemini = () => {
    */
   const createUniversalScaftPrompt = (text, type = 'auto', options = {}) => {
     const { level = 'simple' } = options;
-    
-    // タイプに応じたヒントを準備
+
     const typeHints = {
-      'code': '提供されたコードスニペットを分析し、コードの目的、構造、潜在的な問題点を特定してください。',
-      'error': 'エラーメッセージを分析し、エラーの原因と解決策を特定してください。',
-      'library': 'この技術/ライブラリの概要を説明し、典型的な使用例と注意点を示してください。',
-      'auto': '提供されたテキストの種類を自動的に特定し、最適な形式で解析してください。'
+      'code': 'コードの目的、構造、注意点などを明確に説明してください。',
+      'error': 'エラーが発生した理由とその対処法を説明してください。',
+      'library': '概要、使用方法、注意点などを簡潔に説明してください。',
+      'auto': '内容に応じて最適な形式で解説してください。'
     };
-    
-    // レベルに応じた詳細度の指示
+
     const levelInstructions = {
-      'simple': '初心者向けに簡潔で分かりやすい言葉で説明し、専門用語は必要最小限に抑えてください。',
-      'detailed': '詳細な技術的分析を提供し、関連する技術的概念や背景情報も含めてください。'
+      'simple': '初心者にも理解できるよう、簡潔で平易な表現を用いてください。',
+      'detailed': '必要に応じて概念や背景情報を含め、丁寧に説明してください。'
     };
-    
-    // プロンプトのベース
-    const systemPrompt = `
-# S-C-A-F-Tフレームワークによる技術的内容の解析
 
-あなたは経験豊富な技術エキスパートとして、提供された技術的な内容を分析し、「S-C-A-F-T」フレームワークに従って構造化された解説を提供してください。
+    return `
+あなたは優秀な技術解説者です。以下の入力について、「S-C-A-F-T」フレームワークに従い、静かで論理的な日本語で解説してください。
 
-## 指示事項:
-- 以下の内容を日本語で解説してください。
-- 技術的な専門用語は必要に応じて英語のまま使用しても構いません。
-- 各セクションを明確に区分けして、見やすい形式で回答を構成してください。
-- ${typeHints[type] || typeHints['auto']}
-- ${levelInstructions[level] || levelInstructions['simple']}
+解説対象の種類: ${type}
+説明レベル: ${level}
 
-## S-C-A-F-Tフレームワーク:
+${typeHints[type] || typeHints['auto']}
+${levelInstructions[level] || levelInstructions['simple']}
 
-1. **Summary（概要）**: 
-   - 内容の全体的な概要を簡潔に説明
-   - 最も重要なポイントを1-2文で要約
+出力フォーマット:
+1. 状況（Situation）  
+   入力の背景や前提、何に関する内容かを簡潔に述べる。
 
-2. **Cause（原因）**: 
-   - 状況が生まれた技術的・論理的な理由や背景を特定し、平易な言葉で説明してください
-   - 入力がコードやエラーの場合は、何が引き金となったのか／どのような構造・仕様が関与しているかも簡潔に示してください
+2. 原因（Cause）  
+   その内容が発生・構成されている技術的な理由を説明する。
 
-3. **Analysis（分析）**: 
-   - 内容の詳細な分析
-   - コードの場合：実行フロー、重要な関数/変数の役割、コード構造
-   - エラーの場合：エラーの種類、影響範囲、潜在的な原因
+3. 分析（Analysis）  
+   中身の詳細や仕組み、構造、重要な要素などを整理して説明する。
 
-4. **Fix/Feature（修正/機能）**: 
-   - 問題がある場合は解決策を具体的に提案
-   - コードの改善方法や最適化の提案
-   - 代替アプローチの提示
+4. 対策または特徴（Fix or Feature）  
+   問題がある場合は解決策を。そうでなければ応用・注意点・実用例などを提示する。
 
-5. **Terminology（用語補足）**: 
-   - 入力文や解説の中に含まれる専門用語・略語・概念について、初学者でも理解できるよう一言で補足説明してください
-   - 項目ごとに「用語：説明」としてください（例：「npm：Node.jsのライブラリ管理ツール」）
+5. 用語補足（Terminology）  
+   専門用語や略語が含まれる場合、初心者向けに簡潔な一文で補足する（不要であれば省略可）。
 
-## 解析対象の内容:
-テキスト種類: ${type}
-解説レベル: ${level}
+制約:
+- 入力内容の再掲は禁止
+- 絵文字・装飾記号（#, *, ** など）は使用しない
+- 出力は600文字以内を目安とする
+- 口調はフラットに。事実と構造に基づいた説明を優先する
+- 日本語で出力すること
 
 ===内容開始===
 ${text}
 ===内容終了===
 `;
+  };
 
-    return systemPrompt;
+  /**
+   * 再生成用のプロンプトを作成する関数
+   * @param {string} code - 元のコード
+   * @param {string} previousResult - 前回の結果
+   * @returns {string} プロンプト
+   */
+  const createRegeneratePrompt = (code, previousResult) => {
+    return `
+あなたは優秀な技術解説者です。以下のコードをより詳細に解説してください。前回の説明だけでは十分理解できなかったため、さらに明確な解説が必要です。
+
+# 元のコード:
+\`\`\`
+${code}
+\`\`\`
+
+# 前回の説明:
+${previousResult}
+
+# 指示:
+1. 前回の説明よりも詳細に、コードの目的、機能、重要な部分を解説してください
+2. 専門用語がある場合は、それについても簡潔に説明を加えてください
+3. コードの流れや処理の順序を明確にしてください
+4. 可能であれば、コードの改善点や注意点も提案してください
+
+出力フォーマット:
+1. 状況（Situation）  
+   入力の背景や前提、何に関する内容かを簡潔に述べる。
+
+2. 原因（Cause）  
+   その内容が発生・構成されている技術的な理由を説明する。
+
+3. 分析（Analysis）  
+   中身の詳細や仕組み、構造、重要な要素などを整理して説明する。
+
+4. 対策または特徴（Fix or Feature）  
+   問題がある場合は解決策を。そうでなければ応用・注意点・実用例などを提示する。
+
+5. 用語補足（Terminology）  
+   専門用語や略語が含まれる場合、初心者向けに簡潔な一文で補足する。
+
+制約:
+- 入力内容の再掲は禁止
+- 絵文字・装飾記号（#, *, ** など）は使用しない
+- 日本語で出力すること
+    `;
   };
 
   /**
@@ -183,21 +217,21 @@ ${text}
   };
 
   /**
-   * コードを翻訳する
-   * @param {string} text - 翻訳対象のテキスト
-   * @param {string} type - テキストの種類 ('code', 'error', 'auto'など)
-   * @param {Object} options - オプションパラメータ
-   * @returns {Promise<string>} - 翻訳結果
+   * コードを翻訳する関数
+   * @param {string} code - 翻訳対象のコード
+   * @param {boolean} isRegenerate - 再生成モードかどうか
+   * @returns {Promise<string>} 翻訳されたコード
    */
-  const translateCode = useCallback(async (text, type = 'code', options = {}) => {
-    if (!text.trim()) {
-      setError('テキストが空です');
-      return;
-    }
-
+  const translateCode = async (code, isRegenerate = false) => {
+    if (!code) return;
+    
     setLoading(true);
     setError(null);
-    setResult(null);
+    
+    // 再生成の場合は既存の結果を保持する
+    if (!isRegenerate) {
+      setResult(null);
+    }
 
     try {
       const apiKey = await getApiKey();
@@ -205,8 +239,10 @@ ${text}
         throw new Error('APIキーが設定されていません');
       }
 
-      // 汎用プロンプトを使用
-      const prompt = createUniversalScaftPrompt(text, type, options);
+      // プロンプトの生成
+      const prompt = isRegenerate
+        ? createRegeneratePrompt(code, result)
+        : createUniversalScaftPrompt(code);
       
       // APIリクエストの設定
       const requestUrl = `${API_URL}?key=${apiKey}`;
@@ -222,7 +258,7 @@ ${text}
             }
           ],
           generationConfig: {
-            temperature: 0.4,
+            temperature: isRegenerate ? 0.6 : 0.4, // 再生成の場合は少し温度を上げる
             topK: 32,
             topP: 0.95,
             maxOutputTokens: 1000,
@@ -230,7 +266,7 @@ ${text}
         })
       };
 
-      console.log('Sending request to Gemini API...');
+      console.log(`Sending request to Gemini API... ${isRegenerate ? '(Regenerate mode)' : ''}`);
       
       // APIリクエスト実行
       const response = await fetchWithRetry(requestUrl, requestOptions);
@@ -249,17 +285,20 @@ ${text}
     } finally {
       setLoading(false);
     }
-  }, []);
-
-  const processMarkdown = (text) => {
-    return text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
   };
 
+  const processMarkdown = (text) => {
+    // 太字変換を削除し、テキストをそのまま返す
+    return text;
+  };
+
+  // コンポーネントからアクセスできる関数とステートをエクスポート
   return {
     translateCode,
     loading,
     error,
     result,
+    setResult,
     clearResult: () => setResult(null),
     clearError: () => setError(null)
   };

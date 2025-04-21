@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { saveData, getData, removeData, saveApiKey, getApiKey } from '../utils/storage';
 
 /**
@@ -9,8 +9,8 @@ const useStorage = () => {
   // 設定データの状態
   const [settings, setSettings] = useState({
     apiKey: '',
-    theme: 'light',
-    fontSize: 'medium',
+    theme: 'dark',
+    fontSize: 14,
     languageMode: 'simple',
     maxHistoryItems: 50,
   });
@@ -34,8 +34,8 @@ const useStorage = () => {
         const apiKey = await getApiKey() || '';
         
         // 他の設定を取得
-        const theme = await getData('theme') || 'light';
-        const fontSize = await getData('fontSize') || 'medium';
+        const theme = await getData('theme') || 'dark';
+        const fontSize = await getData('fontSize') || 14;
         const languageMode = await getData('languageMode') || 'simple';
         const maxHistoryItems = await getData('maxHistoryItems') || 50;
 
@@ -280,6 +280,85 @@ const useStorage = () => {
     }
   }, []);
 
+  // ストレージからデータを取得
+  const getStorageData = useCallback(async () => {
+    try {
+      const data = await new Promise((resolve) => {
+        chrome.storage.sync.get(null, (result) => {
+          resolve(result);
+        });
+      });
+      
+      // データをステートに設定
+      setSettings(data);
+      return data;
+    } catch (error) {
+      console.error('ストレージからの読み込みに失敗しました', error);
+      return settings;
+    }
+  }, [settings]);
+
+  // 初期化時にストレージからデータを読み込む
+  useEffect(() => {
+    getStorageData();
+  }, [getStorageData]);
+
+  // ストレージにデータを保存
+  const saveStorageData = useCallback(async (data) => {
+    try {
+      await new Promise((resolve, reject) => {
+        chrome.storage.sync.set(data, () => {
+          if (chrome.runtime.lastError) {
+            reject(chrome.runtime.lastError);
+          } else {
+            resolve();
+          }
+        });
+      });
+      
+      // データの更新
+      await getStorageData();
+      return true;
+    } catch (error) {
+      console.error('ストレージへの保存に失敗しました', error);
+      return false;
+    }
+  }, [getStorageData]);
+
+  // 特定のキーに値を保存
+  const setItem = useCallback(async (key, value) => {
+    try {
+      await new Promise((resolve, reject) => {
+        chrome.storage.local.set({ [key]: value }, () => {
+          if (chrome.runtime.lastError) {
+            reject(chrome.runtime.lastError);
+          } else {
+            resolve();
+          }
+        });
+      });
+      return true;
+    } catch (error) {
+      console.error(`アイテム ${key} の保存に失敗しました:`, error);
+      return false;
+    }
+  }, []);
+
+  // 特定のキーから値を取得
+  const getItem = useCallback(async (key, defaultValue = null) => {
+    try {
+      const result = await new Promise((resolve) => {
+        chrome.storage.local.get([key], (result) => {
+          resolve(result[key]);
+        });
+      });
+      return result !== undefined ? result : defaultValue;
+    } catch (error) {
+      console.error(`アイテム ${key} の取得に失敗しました:`, error);
+      return defaultValue;
+    }
+  }, []);
+
   return {
     // 設定関連
     settings,
@@ -295,6 +374,12 @@ const useStorage = () => {
     getHistory,
     removeHistoryItem,
     clearHistory,
+    
+    // ストレージ関連
+    getStorageData,
+    saveStorageData,
+    setItem,
+    getItem,
     
     // 状態
     loading,

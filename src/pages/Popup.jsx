@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Header from '../components/Header';
 import InputBox from '../components/InputBox';
 import OutputBox from '../components/OutputBox';
@@ -6,44 +6,80 @@ import ActionButton from '../components/ActionButton';
 import SettingsButton from '../components/SettingsButton';
 import useGemini from '../hooks/useGemini';
 import useStorage from '../hooks/useStorage';
+import { motion } from 'framer-motion';
+import { saveData, getData } from '../utils/storage';
 
 // 環境変数からバージョンを取得
 const appVersion = process.env.PACKAGE_VERSION || '0.1.0';
 
 function Popup() {
   const [inputText, setInputText] = useState('');
-  const { translateCode, result, loading, error } = useGemini();
+  const [outputDisplay, setOutputDisplay] = useState('empty'); // 'empty', 'loading', 'result', 'error'
+  const { translateCode, result, setResult, loading, error } = useGemini();
   const { settings } = useStorage();
   
+  // ポップアップが開かれたときに前回の状態を読み込む
+  useEffect(() => {
+    const loadPreviousState = async () => {
+      try {
+        const savedInput = await getData('lastInput');
+        const savedOutput = await getData('lastOutput');
+        
+        if (savedInput) {
+          setInputText(savedInput);
+        }
+        
+        if (savedOutput) {
+          setResult(savedOutput);
+        }
+      } catch (err) {
+        console.error('前回の状態の読み込みに失敗しました:', err);
+      }
+    };
+    
+    loadPreviousState();
+  }, [setResult]);
+  
+  // 入力テキストが変更されたときの処理
   const handleInputChange = (event) => {
-    setInputText(event.target.value);
+    const newInput = event.target.value;
+    setInputText(newInput);
+    
+    // 入力テキストをストレージに保存
+    saveData('lastInput', newInput).catch(err => {
+      console.error('入力テキストの保存に失敗しました:', err);
+    });
   };
 
+  // テキスト翻訳を実行する関数
   const handleTranslate = async () => {
     if (!inputText.trim()) return;
     
-    // APIキーが設定されているか確認
-    if (!settings.apiKey) {
-      alert('APIキーが設定されていません。設定画面でAPIキーを入力してください。');
-      handleOpenSettings();
-      return;
+    setOutputDisplay("loading");
+    try {
+      await translateCode(inputText);
+      setOutputDisplay("result");
+    } catch (e) {
+      setOutputDisplay("error");
     }
+  };
+  
+  // 再生成を実行する関数
+  const handleRegenerate = async () => {
+    if (!inputText.trim() || !result) return;
     
-    // Gemini APIを呼び出して翻訳を実行
-    await translateCode(inputText, 'code', { 
-      level: settings.languageMode || 'simple' 
-    });
+    setOutputDisplay("loading");
+    try {
+      await translateCode(inputText, true); // 再生成フラグをtrueに設定
+      setOutputDisplay("result");
+    } catch (e) {
+      setOutputDisplay("error");
+    }
   };
 
   // 設定画面に移動する関数
   const handleOpenSettings = () => {
-    // Chrome拡張機能の場合
-    if (typeof chrome !== 'undefined' && chrome.runtime && chrome.runtime.openOptionsPage) {
-      chrome.runtime.openOptionsPage();
-    } else {
-      // 通常のWeb環境の場合（開発環境など）
-      window.open('options.html', '_blank');
-    }
+    chrome.runtime.openOptionsPage();
   };
 
   // カスタムヘッダースタイル
@@ -74,25 +110,40 @@ function Popup() {
         </div>
       </div>
       <main className="main-content">
-        <InputBox 
-          value={inputText} 
-          onChange={handleInputChange} 
+        <InputBox
+          value={inputText}
+          onChange={handleInputChange}
           placeholder="ここにコードやエラーメッセージを入力してください"
         />
-        <div className="button-container"> 
+        <motion.div 
+          className="button-container"
+          style={{ display: 'flex', justifyContent: 'center', width: '100%' }}
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ 
+            duration: 0.25, 
+            ease: "easeOut",
+            delay: 0,
+            type: "tween"
+          }}
+        > 
           <ActionButton 
-            onClick={handleTranslate} 
+            onClick={handleTranslate}
             isLoading={loading} 
             disabled={!inputText.trim()}
           >
             Run
           </ActionButton>
+        </motion.div>
+        <div className="h-1/2 w-full">
+          <OutputBox
+            outputDisplay={outputDisplay}
+            result={result}
+            error={error}
+            onRegenerate={handleRegenerate}
+            className="w-full"
+          />
         </div>
-        <OutputBox 
-          outputText={result || ''} 
-          errorText={error} 
-          isLoading={loading} 
-        />
       </main>
     </div>
   );

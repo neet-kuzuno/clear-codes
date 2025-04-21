@@ -10,12 +10,6 @@ function ActionButton({ onClick, children, disabled, isLoading }) {
       className="action-button"
       whileHover={!disabled && !isLoading ? { scale: 1.03, y: -2 } : {}}
       whileTap={!disabled && !isLoading ? { scale: 0.98 } : {}}
-      initial={{ opacity: 0, y: 10 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ 
-        duration: 0.3, 
-        ease: "easeOut",
-      }}
     >
       {isLoading ? (
         <>

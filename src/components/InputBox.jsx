@@ -7,9 +7,14 @@ function InputBox({ value, onChange, placeholder }) {
   return (
     <motion.div 
       className="input-group"
-      initial={{ opacity: 0, y: 10 }}
+      initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.3 }}
+      transition={{ 
+        duration: 0.25, 
+        ease: "easeOut",
+        delay: 0,
+        type: "tween"
+      }}
     >
       <motion.label 
         htmlFor="input-text" 
@@ -22,7 +27,7 @@ function InputBox({ value, onChange, placeholder }) {
       </motion.label>
       <motion.textarea
         id="input-text"
-        rows={5}
+        rows={4}
         className="textarea"
         placeholder={placeholder || "Paste code, error messages, or text here..."}
         value={value}
